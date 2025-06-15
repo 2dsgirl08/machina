@@ -7,7 +7,6 @@ import json
 import os
 import io
 import sys
-import time
 
 if sys.platform == "win32":
     import msvcrt
