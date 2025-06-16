@@ -54,5 +54,5 @@ get_machina_module = function(path)
 	return loadstring(node.contents)()
 end
 
-getgenv().MACHINA_INSTANCE = HttpService:GenerateGUID()
+getgenv().MACHINA_INSTANCE = HttpService:GenerateGUID(); task.wait(1)
 loadstring(MACHINA_PATH["main.lua"].contents)()
