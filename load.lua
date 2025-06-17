@@ -5,6 +5,7 @@ getgenv().MACHINA_WEBSERVER_PORT = 8766
 -- Do not edit below, unless you know what you're doing.
 
 local HttpService = game:GetService("HttpService")
+local ModuleCache = {}
 
 local function try(addresses)
 	for _, address in addresses do
@@ -27,6 +28,10 @@ getgenv().MACHINA_PATH = response.path
 getgenv().MACHINA_CONFIG = response.config
 
 get_machina_module = function(path)
+	if ModuleCache[path] then
+		return ModuleCache[path]
+	end
+
 	local parts = {}
 
 	for part in string.gmatch(path, "[^/]+") do
@@ -51,7 +56,10 @@ get_machina_module = function(path)
 		error("Path is a directory: " .. path)
 	end
 
-	return loadstring(node.contents)()
+	local module = loadstring(node.contents)()
+	ModuleCache[path] = module
+
+	return module
 end
 
 getgenv().MACHINA_INSTANCE = HttpService:GenerateGUID(); task.wait(1)
