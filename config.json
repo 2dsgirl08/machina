@@ -1,0 +1,32 @@
+{
+    "WEBSOCKET_PORT": 8765,
+    "WEBSERVER_PORT": 8766,
+    "obsClipping": {
+        "enabled": true,
+        "port": 4455,
+        "password": "",
+        "path": ""
+    },
+    "discord": {
+        "enabled": true,
+        "token": "",
+        "normal": "",
+        "ionized": "",
+        "spectral": "",
+        "clips": ""
+    },
+    "autoSell": {
+        "enabled": true,
+        "rate": 0.4,
+        "blacklist": []
+    },
+    "verifyIntegrityOfScripts": true,
+    "shouldSwitchToBedrockMinablePickaxe": true,
+    "autoMineNonLayerOres": true,
+    "teleportBackUponMineReset": false,
+    "walkToOres": true,
+    "grindUntradablesOnlyForRecipes": true,
+    "walkToOresTierAndAbove": "exquisite",
+    "miningDirectionY": -0.03,
+    "debug": false
+}
