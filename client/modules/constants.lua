@@ -5,7 +5,7 @@ local Constants = {}
 
 Constants.INTEGRITY_KICK_MESSAGE = "[ MACHINA ANTI-BAN SYSTEM ]\nFailed to verify integrity of scripts, contact 2dsgirl08 or disable `verifyIntegrityOfScripts` in `config.json` (not recommended).\n%s: %s"
 Constants.MINE_QUEUE = {}
-Constants.VALUABLE_TIERS = {"supernatural", "mythic", "surreal", "master", "rare"}
+Constants.VALUABLE_TIERS = {"supernatural", "mythic", "surreal", "master", "rare", "uncommon"}
 Constants.MINE_QUEUE_ORDER = {
 	"supernatural",
 	"mythic",
@@ -28,6 +28,7 @@ Constants.Regions = {}
 Constants.BaseOres = {}
 Constants.SellableOres = {}
 Constants.MiningDirections = {Vector2.new(0, 1), Vector2.new(0, -1), Vector2.new(1, 0), Vector2.new(-1, 0)}
+Constants.AbilityTable = {}
 Constants.NotableItems = {
 	"miners_mallet",
 	"stone_ravager",
@@ -135,6 +136,30 @@ for _, world in Constants.Worlds do
 	for region, data in Constants.GameInformation.regions[world] do
 		Constants.Regions[region] = data
 		table.insert(Constants.BaseOres, data.baseOre)
+	end
+end
+
+for _, object in getgc() do
+	if type(object) ~= "function" then
+		continue
+	end
+
+	local info = debug.getinfo(object)
+
+	if info.name == "processManualPickaxeInput" then
+		Constants.AbilityTable = debug.getupvalues(object)[3]
+		print("Got ability table")
+	end
+
+	if info.name == "genericManualUpdate" then
+		Constants.GenericManualUpdate = object
+		print("Got GenericManualUpdate function")
+	end
+
+	if info.name == "abilityTriggerVerificationCheck" then
+		hookfunction(object, function()
+			return true
+		end)
 	end
 end
 

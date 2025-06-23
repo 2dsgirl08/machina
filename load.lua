@@ -1,7 +1,3 @@
--- Make sure these are identical to the ones in `config.json`.
-getgenv().MACHINA_WEBSOCKET_PORT = 8765
-getgenv().MACHINA_WEBSERVER_PORT = 8766
-
 -- Do not edit below, unless you know what you're doing.
 
 local HttpService = game:GetService("HttpService")
@@ -9,16 +5,15 @@ local ModuleCache = {}
 
 local function try(addresses)
 	for _, address in addresses do
-		local success, result = pcall(request, {Url = "http://" .. address .. ":" .. MACHINA_WEBSERVER_PORT, Method = "GET"})
+		local success, result = pcall(request, {Url = "http://" .. address, Method = "GET"})
 
 		if success and result and result.Success then
-			getgenv().MACHINA_HOST = address
 			return HttpService:JSONDecode(result.Body)
 		end
 	end
 end
 
-local response = try({"127.0.0.1", "10.0.2.2"})
+local response = try({MACHINA_WEBSERVER_ADDRESS})
 
 if not response then
 	error("Failed to connect to Machina.", 0)

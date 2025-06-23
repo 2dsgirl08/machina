@@ -11,7 +11,7 @@ local SHA1 = get_machina_module("modules/sha1.lua")
 local Constants = get_machina_module("modules/constants.lua")
 local TaskHandlers = get_machina_module("modules/task_handlers.lua")
 
-local Socket = SocketModule.connect("ws://" .. MACHINA_HOST .. ":" .. MACHINA_WEBSOCKET_PORT)
+local Socket = SocketModule.connect("ws://" .. MACHINA_WEBSOCKET_ADDRESS)
 local GameInfo = Constants.GameInformation
 
 local Player = Players.LocalPlayer
@@ -164,6 +164,10 @@ local gotOreListener = TaskHandlers.getGotOreSignal():Connect(function(ore)
 end)
 
 local oreAddedListener = Mine.ChildAdded:Connect(function(ore)
+	if ore:GetAttribute("owner") and ore:GetAttribute("owner") ~= Player.UserId then
+		return
+	end
+
 	if not GameInfo.ores[ore.Name] then
 		return
 	end
@@ -180,7 +184,7 @@ local oreAddedListener = Mine.ChildAdded:Connect(function(ore)
 
 	local tier = ore.Name == "tripmine" and "supernatural" or Constants.MINE_QUEUE_ORDER[math.max(9 - oreData.tier.tierNum, 1)]
 
-	if (tier == "layer") and not currentTask.goal.normal[ore.Name] and not currentTask.goal.ionized[ore.Name] then
+	if (tier == "common" or tier == "layer") and not currentTask.goal.normal[ore.Name] and not currentTask.goal.ionized[ore.Name] then
 		return
 	end
 
@@ -208,16 +212,30 @@ local __namecall; __namecall = hookmetamethod(game, "__namecall", newcclosure(fu
 	return __namecall(self, ...)
 end))
 
+local oldGenericManualUpdate; oldGenericManualUpdate = hookfunction(Constants.GenericManualUpdate, function(pickaxeName, ui, data)
+	if Self ~= MACHINA_INSTANCE then
+		return oldGenericManualUpdate(pickaxeName, ui, data)
+	end
+
+	if data.blocksForPotency <= data.blocksMined then
+		Constants.AbilityTable[pickaxeName].activate()
+		return oldGenericManualUpdate(pickaxeName, ui, data)
+	end
+
+	return oldGenericManualUpdate(pickaxeName, ui, data)
+end)
+
 task.spawn(function()
 	while Self == MACHINA_INSTANCE do
 		task.wait()
 	end
 
-	Socket:disconnect()
 	TaskHandlers.cancel()
+	Socket:disconnect()
 	oreAddedListener:Disconnect()
 	gotOreListener:Disconnect()
 	playerIdledListener:Disconnect()
+	mineResetListener:Disconnect()
 end)
 
 while Self == MACHINA_INSTANCE do task.wait();

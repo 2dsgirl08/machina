@@ -16,17 +16,15 @@
         "clips": ""
     },
     "autoSell": {
-        "enabled": true,
+        "enabled": false,
         "rate": 0.4,
         "blacklist": []
     },
     "verifyIntegrityOfScripts": true,
     "shouldSwitchToBedrockMinablePickaxe": true,
-    "autoMineNonLayerOres": true,
     "teleportBackUponMineReset": false,
-    "walkToOres": true,
     "grindUntradablesOnlyForRecipes": true,
-    "walkToOresTierAndAbove": "exquisite",
-    "miningDirectionY": -0.03,
-    "debug": false
+    "autoManual": true,
+    "miningDirectionY": -0.06,
+    "debug": true
 }
